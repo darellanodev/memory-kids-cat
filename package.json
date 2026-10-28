@@ -1,0 +1,20 @@
+{
+  "name": "memorykidscat",
+  "version": "0.1.0",
+  "description": "Memory Kids Cat: memory games for kids, for the web. Port of the old Processing game for Android (2014).",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@10.12.4",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.3.4",
+    "vite-plugin-pwa": "^2.0.0"
+  },
+  "engines": {
+    "node": ">=20.19"
+  }
+}

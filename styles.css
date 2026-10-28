@@ -1,0 +1,79 @@
+@font-face {
+    /* The font of the old game. It is used for the texts drawn in the canvas. */
+    font-family: "Helsinki";
+    src: url("./src/assets/fonts/helsinki.ttf") format("truetype");
+    font-display: block;
+}
+:root {
+    --bg: #f1f1f4;
+    --fg: #222;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #15151a;
+        --fg: #eee;
+    }
+}
+html,
+body {
+    margin: 0;
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: system-ui, sans-serif;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+canvas {
+    /* The size on screen does not depend on the pixels of the canvas.
+       The canvas pixels are set in src/main.js to match the screen. */
+    width: min(400px, 96vw, calc(86vh * 500 / 800));
+    height: auto;
+    aspect-ratio: 500 / 800;
+    touch-action: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+small {
+    opacity: 0.7;
+}
+html,
+body {
+    overscroll-behavior: none;
+}
+
+/* Phones and tablets, and when the game is installed as an app:
+   the game uses all the screen and keeps its proportions. */
+@media (pointer: coarse), (display-mode: standalone), (display-mode: fullscreen) {
+    html,
+    body {
+        overflow: hidden;
+        background: #e6e6e6; /* also the bands above and below the game, and behind the navigation bar of Android */
+    }
+    body {
+        gap: 0;
+    }
+    :root {
+        --free-height: calc(
+            100dvh - env(safe-area-inset-top, 0px) -
+                env(safe-area-inset-bottom, 0px)
+        );
+    }
+    canvas {
+        width: min(100vw, calc(var(--free-height) * 500 / 800));
+        border-radius: 0;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+    }
+    small {
+        display: none;
+    }
+}
