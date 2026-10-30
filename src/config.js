@@ -53,6 +53,24 @@ export const BANNER_OUT = 2000;
 // Fix for the height of the texts: the old game moved all texts down 13 px on Android.
 export const TEXT_DY = 13;
 
+// --- Map between levels ---
+// Place of the cat on the map before each level (index 0) and after the last one (index 10).
+export const MAP_POS = [
+  { x: 61, y: 101 },
+  { x: 208, y: 85 },
+  { x: 342, y: 140 },
+  { x: 435, y: 251 },
+  { x: 459, y: 404 },
+  { x: 435, y: 565 },
+  { x: 315, y: 674 },
+  { x: 153, y: 661 },
+  { x: 52, y: 539 },
+  { x: 77, y: 394 },
+  { x: 257, y: 315 },
+];
+export const MAP_WALK_TIME = 3000; // ms that the cat needs to go to the next place
+export const MAP_END_WAIT = 400; // ms to wait when the cat arrives
+
 // --- Buttons (rectangles { x, y, w, h } on the images of the old game) ---
 export const BTN_PLAY = { x: 93, y: 287, w: 323, h: 65 }; // "TRAIN ME NOW!" on the title
 export const BTN_CREDITS = { x: 369, y: 690, w: 129, h: 107 }; // paw on the title

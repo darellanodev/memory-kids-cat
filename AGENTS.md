@@ -39,7 +39,7 @@ src/ui.js         toGame(), inside(), drawText(), formatScore()
 src/assets.js     loads images, sounds and the font; img(name)
 src/audio.js      play(name), unlockAudio()
 src/progress.js   saved data: sound and best score
-src/scenes/       one file per screen: title, games, credits, congrats, pairs
+src/scenes/       one file per screen: title, games, credits, congrats, pairs, map
 src/assets/       images/, sounds/, fonts/ (from the old game)
 ```
 
@@ -48,10 +48,13 @@ src/assets/       images/, sounds/, fonts/ (from the old game)
 `main.js` shows one scene at a time and sends the events to it.
 
 ```
-title -> games -> pairs -> congrats -> title
+title -> games -> pairs -> map -> pairs -> map -> ... -> map -> congrats -> title
   |        |        |
   v        v        v (MENU button, Escape key, or "time is up")
 credits   title    title
+
+(The map shows after every completed level. It calls params.done() when the cat arrives
+ or the player taps; pairs.js gives it the function that starts the next level.)
 ```
 
 Every scene is an object with: `update(now)`, `draw()`, `pointerDown(p)`, and optionally `enter(params)`, `exit()`, `pointerMove(p)`, `pointerUp(p)`, `pointerCancel()`, `keyDown(e)`. It can also have a `hint` text for the line under the canvas. A scene changes screen with `goTo(name, params)`. To add a screen, create a file in `src/scenes/` and register it in `main.js`.
@@ -96,6 +99,7 @@ The old source (`memorykidscat.pde`, about 2800 lines) is not part of this repos
 - Sounds smaller than 4 KB are inlined by Vite into the JavaScript. This is normal.
 - Phones only allow sounds after a tap. `unlockAudio()` (in `audio.js`) is called in the first tap on the title screen. Do not play sounds before that and expect them to be heard.
 - The PWA is only active in the build. Test it with `pnpm build` and `pnpm preview`.
+- The status bar and the navigation bar of Android are black: `theme_color` and `background_color` in `vite.config.js`, `theme-color` in `index.html`, and the background of `html, body` in the standalone block of `styles.css`. Keep these four in sync. An already installed app may need to be uninstalled and installed again to show a new color.
 - Icons: `public/icons/`. They are placeholders. Keep the 4 files and their names, or change them in `vite.config.js` and `index.html`.
 
 ## Saved data
@@ -136,7 +140,7 @@ Each step is meant to be one work session. Order can change.
 - [x] Game 1 *Make pairs*: the 10 themes in random order, banner, time bar, score, exit dialog.
 
 **Step 1: finish game 1 (make pairs)**
-- [ ] Map between levels: `mapa.jpg` and `mapa_gato.png`; the cat walks from one level to the next (3 s, `quadInOut`). Positions: the `pos` array of the old `C_Mapa`.
+- [x] Map between levels (`scenes/map.js`): the cat walks from one level to the next (3 s, `quadInOut`). Positions: `MAP_POS` in `config.js`. Tap to skip.
 - [ ] Particle explosions when a pair is found (`C_ParticleSystem` and `C_Particle`).
 - [ ] Experience bar of the title screen (`barraexp.png`): experience points = sum of the scores; level = `0.04 * sqrt(points)`; next level at `(ceil(level) / 0.04)^2` points. Save the points in `progress.js`.
 - [ ] Optional: the "zoom" effect of a card when it is turned.

@@ -56,7 +56,7 @@ body {
     html,
     body {
         overflow: hidden;
-        background: #e6e6e6; /* also the bands above and below the game, and behind the navigation bar of Android */
+        background: #000; /* also the bands above and below the game, and behind the navigation bar of Android */
     }
     body {
         gap: 0;

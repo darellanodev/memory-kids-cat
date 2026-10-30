@@ -37,11 +37,12 @@ export function createPairsScene({ ctx, goTo }) {
 
   return {
     hint: "Find the pairs before the time runs out.",
-    enter() {
-      order = shuffle(THEMES);
-      level = 0;
+    // No params: new session. With params { order, level, score }: next level after the map.
+    enter(params = {}) {
+      order = params.order || shuffle(THEMES);
+      level = params.level || 0;
       confirmExit = false;
-      startLevel(0);
+      startLevel(params.score || 0);
     },
     update(now) {
       // The game stops while the dialog is open.
@@ -49,13 +50,20 @@ export function createPairsScene({ ctx, goTo }) {
       game.update(now);
 
       if (game.result === "complete") {
-        if (level < order.length - 1) {
-          level++;
-          startLevel(game.score);
-        } else {
-          saveScore(game.score);
-          goTo("congrats", { score: game.score });
-        }
+        // Show the map, and then go to the next level (or to the end of the game).
+        const { score } = game;
+        const finishedLevel = level;
+        goTo("map", {
+          level: finishedLevel,
+          done: () => {
+            if (finishedLevel < order.length - 1) {
+              goTo("pairs", { order, level: finishedLevel + 1, score });
+            } else {
+              saveScore(score);
+              goTo("congrats", { score });
+            }
+          },
+        });
       } else if (game.result === "timeup") {
         leave();
       }

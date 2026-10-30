@@ -3,6 +3,7 @@ import { loadAssets } from "./assets.js";
 import { createCreditsScene } from "./scenes/credits.js";
 import { createCongratsScene } from "./scenes/congrats.js";
 import { createGamesScene } from "./scenes/games.js";
+import { createMapScene } from "./scenes/map.js";
 import { createPairsScene } from "./scenes/pairs.js";
 import { createTitleScene } from "./scenes/title.js";
 import { W, H } from "./config.js";
@@ -63,6 +64,7 @@ async function start() {
     games: createGamesScene({ ctx, goTo }),
     credits: createCreditsScene({ ctx, goTo }),
     congrats: createCongratsScene({ ctx, goTo }),
+    map: createMapScene({ ctx }),
     pairs: createPairsScene({ ctx, goTo }),
   });
 
