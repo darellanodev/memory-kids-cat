@@ -39,7 +39,8 @@ src/tween.js      easing functions and tween() (replaces Ani)
 src/ui.js         toGame(), inside(), drawText(), formatScore()
 src/assets.js     loads images, sounds and the font; img(name)
 src/audio.js      play(name), unlockAudio()
-src/progress.js   saved data: sound and best score
+src/experience.js level and bar of the experience points (pure functions)
+src/progress.js   saved data: sound, best score and experience points
 src/scenes/       one file per screen: title, games, credits, congrats, pairs, map
 src/assets/       images/, sounds/, fonts/ (from the old game)
 ```
@@ -105,7 +106,7 @@ The old source (`memorykidscat.pde`, about 2800 lines) is not part of this repos
 
 ## Saved data
 
-`src/progress.js` keeps `{ sound, bestScore }` in `localStorage` (key `memorykidscat-progress`). If the storage fails, the data is kept only until the page is closed. To start again, run `localStorage.removeItem("memorykidscat-progress")` in the browser console and reload.
+`src/progress.js` keeps `{ sound, bestScore, xp }` in `localStorage` (key `memorykidscat-progress`). If the storage fails, the data is kept only until the page is closed. To start again, run `localStorage.removeItem("memorykidscat-progress")` in the browser console and reload.
 
 ## Gameplay settings (make pairs)
 
@@ -143,7 +144,7 @@ Each step is meant to be one work session. Order can change.
 **Step 1: finish game 1 (make pairs)**
 - [x] Map between levels (`scenes/map.js`): the cat walks from one level to the next (3 s, `quadInOut`). Positions: `MAP_POS` in `config.js`. Tap to skip.
 - [x] Particle explosions when a pair is found (`src/particles.js`): 5 stars per card, fixed steps of 1/60 s like the old game. Settings: `PARTICLE_*` in `config.js`. Other games can reuse `ParticleSystem` (the old game used 2 or 3 stars per tap).
-- [ ] Experience bar of the title screen (`barraexp.png`): experience points = sum of the scores; level = `0.04 * sqrt(points)`; next level at `(ceil(level) / 0.04)^2` points. Save the points in `progress.js`.
+- [x] Experience bar of the title screen (`src/experience.js`, `barraexp.png`): experience points = sum of the scores of the **completed** games (as in the old game, a game lost by time gives nothing; change it in `scenes/pairs.js` if you prefer). Level = `floor(0.04 * sqrt(points))`; next level at `((level + 1) / 0.04)^2` points (625, 2500, 5625...). The old code had a small bug exactly on those limits; it is fixed. The other games must call `addXp(score)` too when they are completed.
 - [ ] Optional: the "zoom" effect of a card when it is turned.
 
 **Step 2: game 2, Sequence** (`C_NivelSecuencia`)

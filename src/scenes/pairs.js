@@ -10,7 +10,7 @@ import {
   W,
 } from "../config.js";
 import { PairsGame, shuffle } from "../pairs.js";
-import { saveScore } from "../progress.js";
+import { addXp, saveScore } from "../progress.js";
 import { createPairsRenderer } from "../render.js";
 import { inside } from "../ui.js";
 
@@ -60,6 +60,7 @@ export function createPairsScene({ ctx, goTo }) {
               goTo("pairs", { order, level: finishedLevel + 1, score });
             } else {
               saveScore(score);
+              addXp(score); // only a completed game gives experience (as in the old game)
               goTo("congrats", { score });
             }
           },

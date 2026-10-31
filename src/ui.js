@@ -26,18 +26,18 @@ export function inside(p, rect) {
 //   effect: "shadow" (black shadow), "glow" (white shadow) or "none".
 //   gray: 0 to 255, color of the text (the old game used grays only).
 //   align: "left", "center" or "right". baseline: "top" or "alphabetic".
-// The old game moved every text down TEXT_DY px, so it is done here too.
+// The old game moved every text down some px (13 by default, some texts used 5 or 6): use dy.
 export function drawText(
   ctx,
   text,
   x,
   y,
-  { size = 40, gray = 255, effect = "shadow", align = "left", baseline = "top" } = {},
+  { size = 40, gray = 255, effect = "shadow", align = "left", baseline = "top", dy = TEXT_DY } = {},
 ) {
   ctx.font = `${size}px ${FONT}`;
   ctx.textAlign = align;
   ctx.textBaseline = baseline;
-  const yy = y + TEXT_DY;
+  const yy = y + dy;
   if (effect !== "none") {
     ctx.fillStyle = effect === "glow" ? "#fff" : "#000";
     ctx.fillText(text, x + 2, yy + 2);

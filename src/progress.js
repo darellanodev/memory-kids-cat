@@ -8,10 +8,11 @@ function read() {
     return {
       sound: !(data && data.sound === false),
       bestScore: Math.max(0, Math.floor(Number(data && data.bestScore) || 0)),
+      xp: Math.max(0, Math.floor(Number(data && data.xp) || 0)),
     };
   } catch (err) {
     // No storage, or the saved data is not valid: use the default values.
-    return { sound: true, bestScore: 0 };
+    return { sound: true, bestScore: 0, xp: 0 };
   }
 }
 
@@ -37,6 +38,16 @@ export function setSound(on) {
 
 export function getBestScore() {
   return data.bestScore;
+}
+
+export function getXp() {
+  return data.xp;
+}
+
+// Add experience points (see experience.js).
+export function addXp(points) {
+  data.xp += Math.max(0, Math.floor(points));
+  save();
 }
 
 // Save the score of a finished game if it is the best one.
