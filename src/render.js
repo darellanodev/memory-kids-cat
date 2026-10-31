@@ -1,5 +1,6 @@
 // Draws the "make pairs" game on the canvas. It does not change the game state.
-import { CARD_SIZE, BTN_PLAY_MENU, W, H } from "./config.js";
+import { CARD_SIZE, BTN_PLAY_MENU, PARTICLE_SIZE, W, H } from "./config.js";
+import { ParticleSystem } from "./particles.js";
 import { drawText, formatScore } from "./ui.js";
 
 // `img(name)` returns a loaded image (see assets.js).
@@ -44,6 +45,15 @@ export function createPairsRenderer(ctx, img) {
     ctx.drawImage(img("time"), 320, 25, 157, 34);
   }
 
+  // Stars that shrink while they fly away. Their position is the top left corner (as in the old game).
+  function drawParticles(g) {
+    const star = img("star");
+    for (const p of g.particles.list) {
+      const s = ParticleSystem.scale(p);
+      ctx.drawImage(star, p.x, p.y, PARTICLE_SIZE.w * s, PARTICLE_SIZE.h * s);
+    }
+  }
+
   function drawMenuButton() {
     const { x, y, w, h } = BTN_PLAY_MENU;
     ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
@@ -62,6 +72,7 @@ export function createPairsRenderer(ctx, img) {
       if (g.showHud) drawHud(g);
       drawMenuButton();
       drawBanner(g);
+      drawParticles(g);
     },
   };
 }

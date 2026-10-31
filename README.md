@@ -2,7 +2,7 @@
 
 Memory games for kids, for the web. It is a port of my old Processing game for Android (2014). Train your memory with the cat!
 
-Right now the game has the title screen, the games menu, the credits, the sound option (saved in the browser) and the first game, **Make pairs**: look at the pictures, remember where they are, and find all the pairs before the time bar is empty. After each level, the cat walks to the next place on the map. The other three games of the old version (Sequence, Languages and Equals) are not ported yet. See the roadmap in `AGENTS.md`.
+Right now the game has the title screen, the games menu, the credits, the sound option (saved in the browser) and the first game, **Make pairs**: look at the pictures, remember where they are, and find all the pairs before the time bar is empty. After each level, the cat walks to the next place on the map, and stars fly out of the cards when you find a pair. The other three games of the old version (Sequence, Languages and Equals) are not ported yet. See the roadmap in `AGENTS.md`.
 
 Built with plain JavaScript (ES modules) and HTML canvas. It uses [Vite](https://vite.dev/) for development and builds, and [pnpm](https://pnpm.io/) as package manager. There are no runtime dependencies.
 
@@ -55,6 +55,7 @@ src/main.js       startup, screens and main loop
 src/config.js     game settings, themes and button areas
 src/pairs.js      rules of the "make pairs" game (no drawing)
 src/render.js     draws the "make pairs" game
+src/particles.js  stars that fly out when a pair is found
 src/tween.js      easing functions (replaces the Ani library of the old game)
 src/ui.js         pointer, hit test and text helpers
 src/assets.js     loads images, sounds and the font

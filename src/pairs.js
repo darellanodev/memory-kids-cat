@@ -30,12 +30,15 @@ import {
   MISS_COVER_DELAY,
   OBSERVE_TIME,
   PAIRS,
+  PARTICLES_PER_CARD,
+  PARTICLE_OFFSET,
   POINTS_MATCH,
   POINTS_MISS,
   ROWS,
   TIME_BAR_MAX,
   TIME_BAR_STEP,
 } from "./config.js";
+import { ParticleSystem } from "./particles.js";
 import { linear, quadIn, quadOut, tween } from "./tween.js";
 
 const BANNER_TOTAL = BANNER_IN + BANNER_HOLD + BANNER_OUT;
@@ -68,7 +71,7 @@ export function bannerY(elapsed) {
 export class PairsGame {
   // theme: one of THEMES. levelNumber: 1, 2, 3... (for the banner).
   // score: points from the previous levels. sfx(name): called to play a sound.
-  constructor({ theme, levelNumber, score = 0, sfx = () => {} }) {
+  constructor({ theme, levelNumber, score = 0, sfx = () => {}, random = Math.random }) {
     this.theme = theme;
     this.levelNumber = levelNumber;
     this.score = score;
@@ -85,6 +88,7 @@ export class PairsGame {
     this.selected = []; // indexes of the face up cards that are not fixed
     this.coverAt = null; // when the two cards that are not a pair are covered
     this.timeStart = 0; // the time bar starts to lose width from here
+    this.particles = new ParticleSystem(random);
 
     // Two cards of every picture, in random places.
     const ids = shuffle(Array.from({ length: CARD_COUNT }, (_, i) => i % PAIRS));
@@ -115,6 +119,7 @@ export class PairsGame {
     }
 
     this.moveCards();
+    this.particles.update(dt);
 
     if (this.banner && this.clock - this.banner.start >= BANNER_TOTAL)
       this.banner = null;
@@ -207,6 +212,12 @@ export class PairsGame {
       b.state = "fixed";
       this.selected = [];
       this.sfx("match");
+      for (const card of [a, b])
+        this.particles.explosion(
+          card.x + PARTICLE_OFFSET,
+          card.y + PARTICLE_OFFSET,
+          PARTICLES_PER_CARD,
+        );
       this.score += POINTS_MATCH;
       this.timeStart = this.clock; // every pair gives the full time again
       this.matched++;

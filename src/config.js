@@ -42,6 +42,15 @@ export const TIME_BAR_MAX = 148; // width of the time bar (px)
 export const TIME_BAR_STEP = 133; // ms for the bar to lose 1 px (about 19.7 s in total)
 export const COMPLETE_DELAY = 800; // ms to wait after the last pair
 
+// Particles (stars that fly out of the cards when a pair is found).
+export const PARTICLES_PER_CARD = 5;
+export const PARTICLE_OFFSET = 39; // from the top left corner of the card (as in the old game)
+export const PARTICLE_STEP = 1000 / 60; // ms: the old game moved particles once per frame at 60 fps
+export const PARTICLE_LIFE = 100; // starts at this value and loses PARTICLE_FADE every step
+export const PARTICLE_FADE = 0.5;
+export const PARTICLE_SPEED = 2; // each speed starts between -2 and 2 px per step
+export const PARTICLE_SIZE = { w: 48, h: 45 }; // size of the star at the start
+
 // Banner (the old "cartel"): it comes up, stays, and goes away.
 export const BANNER_START_Y = 1000;
 export const BANNER_SHOW_Y = 200;

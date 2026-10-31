@@ -34,6 +34,7 @@ src/main.js       startup, scene switching, main loop, pointer and key events
 src/config.js     game settings, THEMES, and the button areas of the old images
 src/pairs.js      rules of one "make pairs" level (no drawing)
 src/render.js     draws the "make pairs" level (does not change the state)
+src/particles.js  ParticleSystem: stars that fly out of the cards (no drawing)
 src/tween.js      easing functions and tween() (replaces Ani)
 src/ui.js         toGame(), inside(), drawText(), formatScore()
 src/assets.js     loads images, sounds and the font; img(name)
@@ -141,7 +142,7 @@ Each step is meant to be one work session. Order can change.
 
 **Step 1: finish game 1 (make pairs)**
 - [x] Map between levels (`scenes/map.js`): the cat walks from one level to the next (3 s, `quadInOut`). Positions: `MAP_POS` in `config.js`. Tap to skip.
-- [ ] Particle explosions when a pair is found (`C_ParticleSystem` and `C_Particle`).
+- [x] Particle explosions when a pair is found (`src/particles.js`): 5 stars per card, fixed steps of 1/60 s like the old game. Settings: `PARTICLE_*` in `config.js`. Other games can reuse `ParticleSystem` (the old game used 2 or 3 stars per tap).
 - [ ] Experience bar of the title screen (`barraexp.png`): experience points = sum of the scores; level = `0.04 * sqrt(points)`; next level at `(ceil(level) / 0.04)^2` points. Save the points in `progress.js`.
 - [ ] Optional: the "zoom" effect of a card when it is turned.
 
