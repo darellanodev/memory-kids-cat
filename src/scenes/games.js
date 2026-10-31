@@ -1,4 +1,4 @@
-// Menu to choose the game. Only "make pairs" is ported so far: the others say "SOON".
+// Menu to choose the game. "Make pairs" and "Sequence" are ported so far: the others say "SOON".
 import { img } from "../assets.js";
 import { play } from "../audio.js";
 import {
@@ -11,7 +11,7 @@ import {
 } from "../config.js";
 import { drawText, inside } from "../ui.js";
 
-const SOON = [GAME_SEQUENCE, GAME_LANGUAGES, GAME_EQUALS];
+const SOON = [GAME_LANGUAGES, GAME_EQUALS];
 
 export function createGamesScene({ ctx, goTo }) {
   return {
@@ -37,6 +37,9 @@ export function createGamesScene({ ctx, goTo }) {
       if (inside(p, GAME_PAIRS)) {
         play("button");
         goTo("pairs");
+      } else if (inside(p, GAME_SEQUENCE)) {
+        play("button");
+        goTo("sequence");
       } else if (inside(p, BTN_BACK)) {
         goTo("title");
       }

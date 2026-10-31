@@ -7,7 +7,7 @@ Guide for coding agents and contributors working on Memory Kids Cat.
 Memory Kids Cat is a set of memory games for kids, for the web. It is a port of my old Processing (Android) game from 2014. The old game had a title screen, a games menu and four games:
 
 1. **Make pairs** (ported): 20 cards come in face up, the player looks at them, they are turned face down, and the player finds the 10 pairs before the time bar is empty. 10 themes (levels) in random order.
-2. **Sequence**: not ported.
+2. **Sequence** (ported): the game shows a sequence of animals (they make their sound) and the player repeats it. Lengths 3 to 11 in 3 stages: EASY, HARD and EXPERT. Winning gives 1000 experience points.
 3. **Languages**: not ported.
 4. **Equals**: not ported.
 
@@ -34,6 +34,10 @@ src/main.js       startup, scene switching, main loop, pointer and key events
 src/config.js     game settings, THEMES, and the button areas of the old images
 src/pairs.js      rules of one "make pairs" level (no drawing)
 src/render.js     draws the "make pairs" level (does not change the state)
+src/sequence.js   rules of the "Sequence" game (no drawing)
+src/render-sequence.js  draws the "Sequence" game
+src/banner.js     movement of the banner (shared by all the games)
+src/render-common.js    drawing pieces shared by the games: banner, time bar, stars, MENU button
 src/particles.js  ParticleSystem: stars that fly out of the cards (no drawing)
 src/tween.js      easing functions and tween() (replaces Ani)
 src/ui.js         toGame(), inside(), drawText(), formatScore()
@@ -41,7 +45,7 @@ src/assets.js     loads images, sounds and the font; img(name)
 src/audio.js      play(name), unlockAudio()
 src/experience.js level and bar of the experience points (pure functions)
 src/progress.js   saved data: sound, best score and experience points
-src/scenes/       one file per screen: title, games, credits, congrats, pairs, map
+src/scenes/       one file per screen: title, games, credits, congrats, pairs, map, sequence
 src/assets/       images/, sounds/, fonts/ (from the old game)
 ```
 
@@ -55,6 +59,8 @@ title -> games -> pairs -> map -> pairs -> map -> ... -> map -> congrats -> titl
   v        v        v (MENU button, Escape key, or "time is up")
 credits   title    title
 
+games -> sequence -> title   (the game ends with a banner: YOU WIN!, FAIL! or TIME IS UP)
+
 (The map shows after every completed level. It calls params.done() when the cat arrives
  or the player taps; pairs.js gives it the function that starts the next level.)
 ```
@@ -63,8 +69,8 @@ Every scene is an object with: `update(now)`, `draw()`, `pointerDown(p)`, and op
 
 Keep each file focused on one job:
 
-- `pairs.js` (and the files of the next games) know the rules. They must not draw, play sounds directly, or read the pointer. Sounds are requested with the `sfx(name)` function that the scene gives to the game.
-- `render.js` only draws. It must not change the game state.
+- `pairs.js`, `sequence.js` (and the files of the next games) know the rules. They must not draw, play sounds directly, or read the pointer. Sounds are requested with the `sfx(name)` function that the scene gives to the game.
+- `render.js`, `render-sequence.js` and `render-common.js` only draw. They must not change the game state. Put in `render-common.js` what two games need.
 - `scenes/*.js` connect everything: they read the pointer, call the game, and call the renderer.
 
 ## How to run
@@ -89,7 +95,7 @@ The old source (`memorykidscat.pde`, about 2800 lines) is not part of this repos
 - **Animations.** The old game used the Ani library (`Ani.to(...)`). Use `tween()` and the easing functions of `src/tween.js`. The default easing of Ani is linear.
 - **Texts.** The old `texto()` function drew a shadow (black or white, 2 px down and right) and moved the text 13 px down (an Android fix). `drawText()` does the same. The font is `helsinki.ttf` (family `Helsinki`).
 - **Cards.** Each theme has a sprite sheet `cartas_<key>.png` (119 × 1190: ten 119 × 119 pictures one under another), a background `fondo_<key>.jpg`, and all share `carta_tapada.png` (the back of the cards).
-- **Sounds.** The old index of each sound: 0 button, 1 completed (played when a level starts), 2 endgame (time is up), 3 match, 4 select (tap on a card), 5 startgame (back to the title), 6 tapartodos (all cards turn face down). The animal sounds of the Sequence game are in the old `sonidos/game2/`.
+- **Sounds.** The old index of each sound: 0 button, 1 completed (played when a level starts), 2 endgame (time is up), 3 match, 4 select (tap on a card), 5 startgame (back to the title), 6 tapartodos (all cards turn face down). The animal sounds of the Sequence game (`cerdo`, `elefante`, `gato`, `oveja`, `perro`, `vaca`) are in `src/assets/sounds` too. Note: the old game played `endgame` also when the player won the Sequence game; here it plays `completed`.
 - **Back key.** The old game used the back key of Android to open the "do you really want to exit?" screen. Here, the Escape key and the MENU button of the play screen do it.
 
 ## Phones and PWA
@@ -145,10 +151,10 @@ Each step is meant to be one work session. Order can change.
 - [x] Map between levels (`scenes/map.js`): the cat walks from one level to the next (3 s, `quadInOut`). Positions: `MAP_POS` in `config.js`. Tap to skip.
 - [x] Particle explosions when a pair is found (`src/particles.js`): 5 stars per card, fixed steps of 1/60 s like the old game. Settings: `PARTICLE_*` in `config.js`. Other games can reuse `ParticleSystem` (the old game used 2 or 3 stars per tap).
 - [x] Experience bar of the title screen (`src/experience.js`, `barraexp.png`): experience points = sum of the scores of the **completed** games (as in the old game, a game lost by time gives nothing; change it in `scenes/pairs.js` if you prefer). Level = `floor(0.04 * sqrt(points))`; next level at `((level + 1) / 0.04)^2` points (625, 2500, 5625...). The old code had a small bug exactly on those limits; it is fixed. The other games must call `addXp(score)` too when they are completed.
-- [ ] Optional: the "zoom" effect of a card when it is turned.
 
-**Step 2: game 2, Sequence** (`C_NivelSecuencia`)
-- [ ] Port the rules and the screen. Uses the animal sounds (`sonidos/game2/`) and `star.png`, `incorrecto.png`, `corazon.png`.
+**Step 2: game 2, Sequence** (`C_NivelSecuencia`) (done)
+- [x] Rules in `src/sequence.js`, drawing in `src/render-sequence.js`, screen in `src/scenes/sequence.js`. Settings: `SEQ_*` in `config.js`. The old game had a `corazon.png` (heart) in the assets that this game does not use (it is probably for the lives of another game).
+- [x] The zoom effect of the cards (the card grows when it is played and shrinks) is part of this game (`SEQ_ZOOM_*`).
 
 **Step 3: game 4, Equals** (`C_NivelEquals`)
 - [ ] Port the rules and the screen (`gato_equals.png`).
@@ -157,7 +163,7 @@ Each step is meant to be one work session. Order can change.
 - [ ] Language menu (`menuidiomas.jpg`, `mapa_idiomas.jpg`) and the game with the word cards (`cartaslang/`, `cartas_language*.png`, `gato_idioma.png`).
 
 **Step 5: quality**
-- [ ] Remove the "SOON" cover of the games menu when all the games exist.
+- [ ] Remove the "SOON" cover (now only Languages and Equals are covered) of the games menu when all the games exist.
 - [ ] Pause the game when the tab or the app is hidden.
 - [ ] Real app icon, and the old `cartel` and button art checked on small phones.
 - [ ] Basic tests for the rules (`pairs.js` is already pure logic and easy to test).

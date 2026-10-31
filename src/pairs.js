@@ -11,12 +11,6 @@
 // The game has its own clock that grows with the time given to update(), so it
 // does not jump when the tab was hidden.
 import {
-  BANNER_END_Y,
-  BANNER_HOLD,
-  BANNER_IN,
-  BANNER_OUT,
-  BANNER_SHOW_Y,
-  BANNER_START_Y,
   BOARD_X,
   BOARD_Y,
   CARD_SIZE,
@@ -38,10 +32,10 @@ import {
   TIME_BAR_MAX,
   TIME_BAR_STEP,
 } from "./config.js";
+import { BANNER_TOTAL, bannerY } from "./banner.js";
 import { ParticleSystem } from "./particles.js";
-import { linear, quadIn, quadOut, tween } from "./tween.js";
+import { linear, tween } from "./tween.js";
 
-const BANNER_TOTAL = BANNER_IN + BANNER_HOLD + BANNER_OUT;
 const CARD_COUNT = COLS * ROWS;
 
 // Shuffle a copy of the list (Fisher-Yates).
@@ -52,20 +46,6 @@ export function shuffle(list) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
-}
-
-// Height of the banner after `elapsed` ms: it comes up, stays, and goes away.
-export function bannerY(elapsed) {
-  if (elapsed < BANNER_IN)
-    return tween(BANNER_START_Y, BANNER_SHOW_Y, elapsed, BANNER_IN, quadOut);
-  if (elapsed < BANNER_IN + BANNER_HOLD) return BANNER_SHOW_Y;
-  return tween(
-    BANNER_SHOW_Y,
-    BANNER_END_Y,
-    elapsed - BANNER_IN - BANNER_HOLD,
-    BANNER_OUT,
-    quadIn,
-  );
 }
 
 export class PairsGame {

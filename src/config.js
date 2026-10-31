@@ -62,6 +62,39 @@ export const BANNER_OUT = 2000;
 // Fix for the height of the texts: the old game moved all texts down 13 px on Android.
 export const TEXT_DY = 13;
 
+// --- Sequence game ---
+// The 6 animals use the theme "animales" (background and sprite sheet). The ids are the
+// pictures of the sprite sheet of that theme, and the sound of each animal is in src/assets/sounds.
+export const SEQ_THEME = "animales";
+export const SEQ_CARD_IDS = [1, 2, 3, 5, 6, 7]; // pig, elephant, cat, sheep, dog, cow
+export const SEQ_SOUNDS = ["cerdo", "elefante", "gato", "oveja", "perro", "vaca"];
+// Final place of the 6 cards (top left corner), as in the old game.
+export const SEQ_CARD_POS = [
+  { x: BOARD_X + 1 * CARD_SIZE - 30, y: 110 },
+  { x: BOARD_X + 2 * CARD_SIZE + 30, y: 110 },
+  { x: BOARD_X + 0 * CARD_SIZE, y: 150 + CARD_SIZE },
+  { x: BOARD_X + 3 * CARD_SIZE, y: 150 + CARD_SIZE },
+  { x: BOARD_X + 1 * CARD_SIZE - 30, y: 190 + 2 * CARD_SIZE },
+  { x: BOARD_X + 2 * CARD_SIZE + 30, y: 190 + 2 * CARD_SIZE },
+];
+export const SEQ_TOTAL = 12; // the game is won when a sequence of 11 is repeated: lengths 3 to 11
+export const SEQ_START_LENGTH = 3;
+// A new stage starts when the sequence reaches this length. The title is shown in the banner.
+export const SEQ_STAGES = [
+  { title: "EASY", from: 3 },
+  { title: "HARD", from: 6 },
+  { title: "EXPERT", from: 9 },
+];
+export const SEQ_DEAL_TICKS = 7; // the old game waited one more step after the 6 cards
+export const SEQ_ZOOM_STEP = 1066.7; // ms between the animals of the sequence (64 frames)
+export const SEQ_FIRST_WAIT = 5000; // ms before the first animal, at the start of a stage
+export const SEQ_NEXT_WAIT = 3333; // ms before the first animal, after a repeated sequence
+export const SEQ_TEXT_LEAD = 1667; // "WATCH THE SEQUENCE" appears this time before the first animal
+export const SEQ_ZOOM_SIZE = 180; // size of a card that was just played, it shrinks to CARD_SIZE
+export const SEQ_ZOOM_SPEED = 0.18; // px per ms (3 px per frame in the old game)
+export const SEQ_FAIL_ICON_TIME = 1667; // ms that the red cross stays on the wrong card
+export const SEQ_WIN_XP = 1000; // experience points for winning
+
 // --- Map between levels ---
 // Place of the cat on the map before each level (index 0) and after the last one (index 10).
 export const MAP_POS = [

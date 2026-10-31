@@ -5,6 +5,7 @@ import { createCongratsScene } from "./scenes/congrats.js";
 import { createGamesScene } from "./scenes/games.js";
 import { createMapScene } from "./scenes/map.js";
 import { createPairsScene } from "./scenes/pairs.js";
+import { createSequenceScene } from "./scenes/sequence.js";
 import { createTitleScene } from "./scenes/title.js";
 import { W, H } from "./config.js";
 import { toGame } from "./ui.js";
@@ -66,6 +67,7 @@ async function start() {
     congrats: createCongratsScene({ ctx, goTo }),
     map: createMapScene({ ctx }),
     pairs: createPairsScene({ ctx, goTo }),
+    sequence: createSequenceScene({ ctx, goTo }),
   });
 
   // Send the pointer events to the current scene.
