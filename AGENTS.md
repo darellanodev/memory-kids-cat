@@ -9,7 +9,7 @@ Memory Kids Cat is a set of memory games for kids, for the web. It is a port of 
 1. **Make pairs** (ported): 20 cards come in face up, the player looks at them, they are turned face down, and the player finds the 10 pairs before the time bar is empty. 10 themes (levels) in random order.
 2. **Sequence** (ported): the game shows a sequence of animals (they make their sound) and the player repeats it. Lengths 3 to 11 in 3 stages: EASY, HARD and EXPERT. Winning gives 1000 experience points.
 3. **Languages**: not ported.
-4. **Equals**: not ported.
+4. **Equals** (ported): 12 cards (6 of each of two pictures) come in, are shown, and are turned face down. The cat shows a model card in his speech bubble and the player taps the 6 cards that are like it. 3 lives (a 4th mistake loses the game), a time bar, and the same 10 themes and map as *Make pairs*.
 
 The goal is to port the whole game step by step, one feature per session.
 
@@ -36,6 +36,9 @@ src/pairs.js      rules of one "make pairs" level (no drawing)
 src/render.js     draws the "make pairs" level (does not change the state)
 src/sequence.js   rules of the "Sequence" game (no drawing)
 src/render-sequence.js  draws the "Sequence" game
+src/equals.js     rules of one "Equals" level (no drawing)
+src/render-equals.js    draws the "Equals" level
+src/random.js     shuffle()
 src/banner.js     movement of the banner (shared by all the games)
 src/render-common.js    drawing pieces shared by the games: banner, time bar, stars, MENU button
 src/particles.js  ParticleSystem: stars that fly out of the cards (no drawing)
@@ -45,7 +48,7 @@ src/assets.js     loads images, sounds and the font; img(name)
 src/audio.js      play(name), unlockAudio()
 src/experience.js level and bar of the experience points (pure functions)
 src/progress.js   saved data: sound, best score and experience points
-src/scenes/       one file per screen: title, games, credits, congrats, pairs, map, sequence
+src/scenes/       one file per screen: title, games, credits, congrats, pairs, equals, map, sequence. levels.js is the screen shared by the games that are played theme after theme (pairs and equals)
 src/assets/       images/, sounds/, fonts/ (from the old game)
 ```
 
@@ -60,6 +63,7 @@ title -> games -> pairs -> map -> pairs -> map -> ... -> map -> congrats -> titl
 credits   title    title
 
 games -> sequence -> title   (the game ends with a banner: YOU WIN!, FAIL! or TIME IS UP)
+games -> equals -> map -> equals -> ... -> map -> congrats -> title   (same loop as pairs; "YOU LOST" also goes to the title)
 
 (The map shows after every completed level. It calls params.done() when the cat arrives
  or the player taps; pairs.js gives it the function that starts the next level.)
@@ -69,8 +73,8 @@ Every scene is an object with: `update(now)`, `draw()`, `pointerDown(p)`, and op
 
 Keep each file focused on one job:
 
-- `pairs.js`, `sequence.js` (and the files of the next games) know the rules. They must not draw, play sounds directly, or read the pointer. Sounds are requested with the `sfx(name)` function that the scene gives to the game.
-- `render.js`, `render-sequence.js` and `render-common.js` only draw. They must not change the game state. Put in `render-common.js` what two games need.
+- `pairs.js`, `sequence.js`, `equals.js` (and the files of the next games) know the rules. They must not draw, play sounds directly, or read the pointer. Sounds are requested with the `sfx(name)` function that the scene gives to the game.
+- `render.js`, `render-sequence.js`, `render-equals.js` and `render-common.js` only draw. They must not change the game state. Put in `render-common.js` what two games need.
 - `scenes/*.js` connect everything: they read the pointer, call the game, and call the renderer.
 
 ## How to run
@@ -130,6 +134,7 @@ All in `src/config.js`. Change them there before changing the logic:
 - Names in English (`cards`, `banner`, `selected`). The old Spanish names are not used.
 - Always use the logical space 500 × 800. Convert pointer coordinates with `toGame()` in `src/ui.js`.
 - Install libraries with pnpm and import them. Do not load libraries from a CDN.
+- **Version:** the `version` in `package.json` follows the number of the delivered zip: zip v7 is `0.7.0`, v8 will be `0.8.0`, and so on. Update it in every new version.
 - Use **pnpm** only. Do not use `npm` or `yarn`, and do not create `package-lock.json` or `yarn.lock`. Commit `pnpm-lock.yaml`, because the CI uses `--frozen-lockfile`.
 - Do not use `localStorage` without a `try/catch`.
 - To add an image or a sound, put the file in `src/assets/images` (png or jpg) or `src/assets/sounds` (mp3). The file name without the extension is its name in the code. Do not use plain paths like `"images/a.png"`, because they break in the build.
@@ -156,14 +161,16 @@ Each step is meant to be one work session. Order can change.
 - [x] Rules in `src/sequence.js`, drawing in `src/render-sequence.js`, screen in `src/scenes/sequence.js`. Settings: `SEQ_*` in `config.js`. The old game had a `corazon.png` (heart) in the assets that this game does not use (it is probably for the lives of another game).
 - [x] The zoom effect of the cards (the card grows when it is played and shrinks) is part of this game (`SEQ_ZOOM_*`).
 
-**Step 3: game 4, Equals** (`C_NivelEquals`)
-- [ ] Port the rules and the screen (`gato_equals.png`).
+**Step 3: game 4, Equals** (`C_NivelEquals`) (done)
+- [x] Rules in `src/equals.js`, drawing in `src/render-equals.js`, screen in `src/scenes/equals.js`. Settings: `EQ_*` in `config.js`. Uses `gato_equals.png` and `corazon.png`.
+- [x] The loop of levels (themes in random order, map, congratulations, experience) moved to `src/scenes/levels.js`, shared with *Make pairs*. A new game of this kind only needs `createGame` and `createRenderer`. The game object must have `score`, `result` (`"complete"` or something else when lost), `over`, `tap(p)` and `update(now)`; `lives` is carried between levels if it has it.
+- Small differences from the old game: a wrong card plays the `select` sound (the old game made no sound) and the red cross also shows on the card of the last mistake when the game is lost.
 
 **Step 4: game 3, Languages** (`C_NivelIdiomas`)
 - [ ] Language menu (`menuidiomas.jpg`, `mapa_idiomas.jpg`) and the game with the word cards (`cartaslang/`, `cartas_language*.png`, `gato_idioma.png`).
 
 **Step 5: quality**
-- [ ] Remove the "SOON" cover (now only Languages and Equals are covered) of the games menu when all the games exist.
+- [ ] Remove the "SOON" cover (now only Languages is covered) of the games menu when all the games exist.
 - [ ] Pause the game when the tab or the app is hidden.
 - [ ] Real app icon, and the old `cartel` and button art checked on small phones.
 - [ ] Basic tests for the rules (`pairs.js` is already pure logic and easy to test).

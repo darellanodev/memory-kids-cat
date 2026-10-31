@@ -95,6 +95,20 @@ export const SEQ_ZOOM_SPEED = 0.18; // px per ms (3 px per frame in the old game
 export const SEQ_FAIL_ICON_TIME = 1667; // ms that the red cross stays on the wrong card
 export const SEQ_WIN_XP = 1000; // experience points for winning
 
+// --- Equals game ---
+// Find all the cards that are like the model card (the cat shows it in his speech bubble).
+export const EQ_COLS = 4;
+export const EQ_ROWS = 3;
+export const EQ_Y = 300; // top of the first row of cards
+export const EQ_TARGETS = 6; // cards like the model to find (the other 6 are the other picture)
+export const EQ_LIVES = 3; // the game is lost with one more mistake after the last life
+export const EQ_MODEL_POS = { x: 215, y: 117 }; // the model card, inside the speech bubble
+export const EQ_CAT = { x: 100, y: 110, w: 250, h: 133 };
+export const EQ_FAIL_ICON_TIME = 1667; // ms that the red cross stays on a wrong card
+export const EQ_HEART = { x: 250, y: 25, w: 35, h: 33 }; // lives: the number is at the left of it
+export const EQ_LIVES_TEXT = { x: 245, y: 10 };
+export const PARTICLES_EQUALS = 3; // stars when the player finds a card
+
 // --- Map between levels ---
 // Place of the cat on the map before each level (index 0) and after the last one (index 10).
 export const MAP_POS = [

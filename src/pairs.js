@@ -34,19 +34,10 @@ import {
 } from "./config.js";
 import { BANNER_TOTAL, bannerY } from "./banner.js";
 import { ParticleSystem } from "./particles.js";
+import { shuffle } from "./random.js";
 import { linear, tween } from "./tween.js";
 
 const CARD_COUNT = COLS * ROWS;
-
-// Shuffle a copy of the list (Fisher-Yates).
-export function shuffle(list) {
-  const a = [...list];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 export class PairsGame {
   // theme: one of THEMES. levelNumber: 1, 2, 3... (for the banner).
@@ -71,7 +62,7 @@ export class PairsGame {
     this.particles = new ParticleSystem(random);
 
     // Two cards of every picture, in random places.
-    const ids = shuffle(Array.from({ length: CARD_COUNT }, (_, i) => i % PAIRS));
+    const ids = shuffle(Array.from({ length: CARD_COUNT }, (_, i) => i % PAIRS), random);
     this.cards = ids.map((id, i) => ({
       id,
       state: "up", // "up" (face up), "down" (face down) or "fixed" (found)
@@ -226,6 +217,11 @@ export class PairsGame {
   // Show the text "LOOK AT THE PICTURES"?
   get showLookText() {
     return this.phase === "observing" && this.clock - this.phaseStart >= LOOK_TEXT_DELAY;
+  }
+
+  // Is the game lost? (the scene shows the banner and goes back to the title)
+  get over() {
+    return this.phase === "timeup";
   }
 
   // Show the score and the time bar?

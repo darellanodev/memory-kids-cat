@@ -1,6 +1,6 @@
 {
   "name": "memorykidscat",
-  "version": "0.5.0",
+  "version": "0.7.0",
   "description": "Memory Kids Cat: memory games for kids, for the web. Port of the old Processing game for Android (2014).",
   "type": "module",
   "private": true,

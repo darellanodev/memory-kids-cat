@@ -2,6 +2,7 @@
 import { loadAssets } from "./assets.js";
 import { createCreditsScene } from "./scenes/credits.js";
 import { createCongratsScene } from "./scenes/congrats.js";
+import { createEqualsScene } from "./scenes/equals.js";
 import { createGamesScene } from "./scenes/games.js";
 import { createMapScene } from "./scenes/map.js";
 import { createPairsScene } from "./scenes/pairs.js";
@@ -67,6 +68,7 @@ async function start() {
     congrats: createCongratsScene({ ctx, goTo }),
     map: createMapScene({ ctx }),
     pairs: createPairsScene({ ctx, goTo }),
+    equals: createEqualsScene({ ctx, goTo }),
     sequence: createSequenceScene({ ctx, goTo }),
   });
 
