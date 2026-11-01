@@ -47,7 +47,8 @@ src/particles.js  ParticleSystem: stars that fly out of the cards (no drawing)
 src/tween.js      easing functions and tween() (replaces Ani)
 src/ui.js         toGame(), inside(), drawText(), formatScore()
 src/assets.js     loads images, sounds and the font; img(name)
-src/audio.js      play(name), unlockAudio()
+src/audio.js      play(name), stopAll(), unlockAudio()
+src/pause.js      PauseClock (a clock that does not count the paused time) and the PAUSED layer
 src/experience.js level and bar of the experience points (pure functions)
 src/progress.js   saved data: sound, best score and experience points
 src/scenes/       one file per screen: title, games, credits, congrats, pairs, equals, languageMenu, languages, map, sequence. levels.js is the screen shared by the games that are played level after level (pairs, equals and languages)
@@ -72,7 +73,7 @@ games -> languageMenu -> languages -> map -> languages -> ... -> map -> congrats
  or the player taps; pairs.js gives it the function that starts the next level.)
 ```
 
-Every scene is an object with: `update(now)`, `draw()`, `pointerDown(p)`, and optionally `enter(params)`, `exit()`, `pointerMove(p)`, `pointerUp(p)`, `pointerCancel()`, `keyDown(e)`. It can also have a `hint` text for the line under the canvas. A scene changes screen with `goTo(name, params)`. To add a screen, create a file in `src/scenes/` and register it in `main.js`.
+Every scene is an object with: `update(now)`, `draw()`, `pointerDown(p)`, and optionally `enter(params)`, `exit()`, `pointerMove(p)`, `pointerUp(p)`, `pointerCancel()`, `keyDown(e)`. It can also have a `hint` text for the line under the canvas, and `pausable: true` if the game must stop when the page is hidden (see "Pause" below). A scene changes screen with `goTo(name, params)`. To add a screen, create a file in `src/scenes/` and register it in `main.js`.
 
 Keep each file focused on one job:
 
@@ -116,6 +117,13 @@ The old source (`memorykidscat.pde`, about 2800 lines) is not part of this repos
 - The PWA is only active in the build. Test it with `pnpm build` and `pnpm preview`.
 - The status bar and the navigation bar of Android are black: `theme_color` and `background_color` in `vite.config.js`, `theme-color` in `index.html`, and the background of `html, body` in the standalone block of `styles.css`. Keep these four in sync. An already installed app may need to be uninstalled and installed again to show a new color.
 - Icons: `public/icons/`. They are placeholders. Keep the 4 files and their names, or change them in `vite.config.js` and `index.html`.
+
+## Pause
+
+When the page is hidden (the player changes app, locks the phone or changes tab; events `visibilitychange` and `pagehide`), `main.js` pauses the current scene if it has `pausable: true` (the levels screens, *Sequence* and the map): the scene gets no more updates, the sounds are stopped, and a "PAUSED / TAP TO CONTINUE" layer is drawn over its last picture. A tap or any key continues the game, and that tap is not given to the scene.
+
+- The scenes receive the **game time**, which does not count the time paused (`PauseClock` in `src/pause.js`). A scene must use the `now` that it gets in `update(now)` and must not call `performance.now()` or `Date.now()` for its game time.
+- A new scene with a clock or an animation must have `pausable: true`. Menus do not need it.
 
 ## Saved data
 
@@ -178,7 +186,7 @@ Each step is meant to be one work session. Order can change.
 **Step 5: quality**
 - [x] The "SOON" cover of the games menu was removed (all the games exist).
 - [ ] The games *Make pairs*, *Equals* and *Languages* repeat the same phases (dealing, observing, covering, playing...). A shared base for them would remove duplicated code.
-- [ ] Pause the game when the tab or the app is hidden.
+- [x] Pause the game when the tab or the app is hidden (`src/pause.js`, see "Pause").
 - [ ] Real app icon, and the old `cartel` and button art checked on small phones.
 - [ ] Basic tests for the rules (`pairs.js` is already pure logic and easy to test).
 - [ ] Move to TypeScript if the project grows.

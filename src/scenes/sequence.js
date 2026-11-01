@@ -26,6 +26,7 @@ export function createSequenceScene({ ctx, goTo }) {
 
   return {
     hint: "Watch the animals and repeat the sequence.",
+    pausable: true, // main.js pauses it when the page is hidden
     enter() {
       game = new SequenceGame({ sfx: play });
       confirmExit = false;

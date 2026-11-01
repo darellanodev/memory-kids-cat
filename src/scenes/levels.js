@@ -49,6 +49,7 @@ export function createLevelsScene({
 
   return {
     hint,
+    pausable: true, // main.js pauses it when the page is hidden
     // New session: no params (or params.extra with the settings of the session).
     // Next level after the map: params { order, level, score, lives, extra }.
     enter(params = {}) {

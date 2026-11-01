@@ -1,5 +1,7 @@
 // Start the game, switch between screens (scenes) and run the main loop.
 import { loadAssets } from "./assets.js";
+import { stopAll } from "./audio.js";
+import { PauseClock, drawPauseOverlay } from "./pause.js";
 import { createCreditsScene } from "./scenes/credits.js";
 import { createCongratsScene } from "./scenes/congrats.js";
 import { createEqualsScene } from "./scenes/equals.js";
@@ -53,9 +55,24 @@ function drawLoading() {
   ctx.fillText("LOADING...", W / 2, H / 2);
 }
 
+// The game pauses when the page is hidden. A scene can be paused if it has `pausable: true`.
+const clock = new PauseClock();
+
+function pauseGame() {
+  if (!current || !current.pausable || clock.paused) return;
+  clock.pause(performance.now());
+  stopAll(); // sounds that were playing would go on in the background
+}
+
+function resumeGame() {
+  clock.resume(performance.now());
+}
+
 function frame(now) {
-  current.update(now);
+  // While paused the scene gets no time: it keeps its last picture, with the PAUSED layer on top.
+  if (!clock.paused) current.update(clock.time(now));
   current.draw();
+  if (clock.paused) drawPauseOverlay(ctx);
   requestAnimationFrame(frame);
 }
 
@@ -79,6 +96,8 @@ async function start() {
   // Send the pointer events to the current scene.
   canvas.addEventListener("pointerdown", (e) => {
     canvas.setPointerCapture(e.pointerId);
+    // The tap that ends the pause is not for the game.
+    if (clock.paused) return resumeGame();
     current.pointerDown(toGame(canvas, e));
   });
   canvas.addEventListener("pointermove", (e) => {
@@ -91,8 +110,14 @@ async function start() {
     if (current.pointerCancel) current.pointerCancel();
   });
   window.addEventListener("keydown", (e) => {
+    if (clock.paused) return resumeGame();
     if (current.keyDown) current.keyDown(e);
   });
+  // Changing app, locking the phone or changing tab hides the page.
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) pauseGame();
+  });
+  window.addEventListener("pagehide", pauseGame);
 
   goTo("title", { silent: true });
   requestAnimationFrame(frame);

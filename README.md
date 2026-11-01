@@ -2,7 +2,7 @@
 
 Memory games for kids, for the web. It is a port of my old Processing game for Android (2014). Train your memory with the cat!
 
-Right now the game has the title screen, the games menu, the credits, the sound option, the best score and the experience (saved in the browser) and the first game, **Make pairs**: look at the pictures, remember where they are, and find all the pairs before the time bar is empty. After each level, the cat walks to the next place on the map, and stars fly out of the cards when you find a pair. Completing a game gives experience points, shown with your level in a bar on the title screen. It also has the second game, **Sequence**: watch the animals and repeat the sequence, in 3 stages. It also has **Equals**: the cat shows a card and you find all the cards that are like it, with 3 lives. And the last game of the old version, **Languages**: find the picture of a word in English, Spanish, French or German. All the games of the old version are ported now. See the roadmap in `AGENTS.md`.
+Right now the game has the title screen, the games menu, the credits, the sound option, the best score and the experience (saved in the browser) and the first game, **Make pairs**: look at the pictures, remember where they are, and find all the pairs before the time bar is empty. After each level, the cat walks to the next place on the map, and stars fly out of the cards when you find a pair. Completing a game gives experience points, shown with your level in a bar on the title screen. It also has the second game, **Sequence**: watch the animals and repeat the sequence, in 3 stages. It also has **Equals**: the cat shows a card and you find all the cards that are like it, with 3 lives. And the last game of the old version, **Languages**: find the picture of a word in English, Spanish, French or German. All the games of the old version are ported now. The game pauses when you change app or lock the phone, and waits for a tap to continue. See the roadmap in `AGENTS.md`.
 
 Built with plain JavaScript (ES modules) and HTML canvas. It uses [Vite](https://vite.dev/) for development and builds, and [pnpm](https://pnpm.io/) as package manager. There are no runtime dependencies.
 
@@ -69,6 +69,7 @@ src/tween.js      easing functions (replaces the Ani library of the old game)
 src/ui.js         pointer, hit test and text helpers
 src/assets.js     loads images, sounds and the font
 src/audio.js      sound effects
+src/pause.js      pause when the page is hidden
 src/experience.js level and bar of the experience points
 src/progress.js   saved data (sound, best score and experience)
 src/scenes/       screens: title, games, credits, congrats, pairs, equals, languageMenu, languages, map, sequence (levels.js is shared by pairs, equals and languages)

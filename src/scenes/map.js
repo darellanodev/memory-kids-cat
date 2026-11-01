@@ -25,6 +25,7 @@ export function createMapScene({ ctx }) {
 
   return {
     hint: "Tap to skip.",
+    pausable: true, // main.js pauses it when the page is hidden
     // params.level: index of the level that was just completed.
     // params.image and params.positions: the map of the game (the map of the themes by default).
     enter(params = {}) {

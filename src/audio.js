@@ -26,6 +26,18 @@ export function play(name) {
   audio.play().catch(() => {});
 }
 
+// Stop all the sounds that are playing (when the game is paused).
+export function stopAll() {
+  for (const audio of Object.values(sounds)) {
+    audio.pause();
+    try {
+      audio.currentTime = 0;
+    } catch (err) {
+      // The sound was not ready yet.
+    }
+  }
+}
+
 // Phones only allow sounds that start after a tap. Playing every sound once, muted,
 // in the first tap makes them available for the rest of the session.
 let unlocked = false;
