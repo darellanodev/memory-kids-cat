@@ -1,7 +1,7 @@
 // Draws the "Equals" game on the canvas. It does not change the game state.
-import { CARD_SIZE, EQ_CAT, EQ_HEART, EQ_LIVES_TEXT, EQ_MODEL_POS, W, H } from "./config.js";
-import { drawBanner, drawMenuButton, drawParticles, drawTimeBar } from "./render-common.js";
-import { drawText, formatScore } from "./ui.js";
+import { CARD_SIZE, EQ_CAT, EQ_MODEL_POS, W, H } from "./config.js";
+import { drawBanner, drawLivesHud, drawMenuButton, drawParticles } from "./render-common.js";
+import { drawText } from "./ui.js";
 
 // `img(name)` returns a loaded image (see assets.js).
 export function createEqualsRenderer(ctx, img) {
@@ -26,12 +26,7 @@ export function createEqualsRenderer(ctx, img) {
       }
       if (g.showFailIcon) ctx.drawImage(img("incorrecto"), g.failedCard.x, g.failedCard.y, 112, 112);
 
-      if (g.showHud) {
-        drawTimeBar(ctx, img, g.timeLeft);
-        ctx.drawImage(img("corazon"), EQ_HEART.x, EQ_HEART.y, EQ_HEART.w, EQ_HEART.h);
-        drawText(ctx, String(Math.max(0, g.lives)), EQ_LIVES_TEXT.x, EQ_LIVES_TEXT.y, { size: 50, align: "right" });
-        drawText(ctx, formatScore(g.score), 20, 10, { size: 50 });
-      }
+      if (g.showHud) drawLivesHud(ctx, img, g);
       drawMenuButton(ctx);
       drawBanner(ctx, img, g);
       drawParticles(ctx, img, g.particles);

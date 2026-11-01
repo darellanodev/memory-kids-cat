@@ -8,7 +8,7 @@ Memory Kids Cat is a set of memory games for kids, for the web. It is a port of 
 
 1. **Make pairs** (ported): 20 cards come in face up, the player looks at them, they are turned face down, and the player finds the 10 pairs before the time bar is empty. 10 themes (levels) in random order.
 2. **Sequence** (ported): the game shows a sequence of animals (they make their sound) and the player repeats it. Lengths 3 to 11 in 3 stages: EASY, HARD and EXPERT. Winning gives 1000 experience points.
-3. **Languages**: not ported.
+3. **Languages** (ported): 6 pictures come in with their word in the chosen language (English, Spanish, French or German) under each one. Then the words disappear and the cat shows one word at the top: the player taps its picture, in order, with 3 lives and a time bar. 4 levels (the first 4 themes) and its own map. All the games of the old version are ported now.
 4. **Equals** (ported): 12 cards (6 of each of two pictures) come in, are shown, and are turned face down. The cat shows a model card in his speech bubble and the player taps the 6 cards that are like it. 3 lives (a 4th mistake loses the game), a time bar, and the same 10 themes and map as *Make pairs*.
 
 The goal is to port the whole game step by step, one feature per session.
@@ -38,9 +38,11 @@ src/sequence.js   rules of the "Sequence" game (no drawing)
 src/render-sequence.js  draws the "Sequence" game
 src/equals.js     rules of one "Equals" level (no drawing)
 src/render-equals.js    draws the "Equals" level
+src/languages.js  rules of one "Languages" level (no drawing)
+src/render-languages.js draws the "Languages" level
 src/random.js     shuffle()
 src/banner.js     movement of the banner (shared by all the games)
-src/render-common.js    drawing pieces shared by the games: banner, time bar, stars, MENU button
+src/render-common.js    drawing pieces shared by the games: banner, time bar, lives and score, stars, MENU button
 src/particles.js  ParticleSystem: stars that fly out of the cards (no drawing)
 src/tween.js      easing functions and tween() (replaces Ani)
 src/ui.js         toGame(), inside(), drawText(), formatScore()
@@ -48,7 +50,7 @@ src/assets.js     loads images, sounds and the font; img(name)
 src/audio.js      play(name), unlockAudio()
 src/experience.js level and bar of the experience points (pure functions)
 src/progress.js   saved data: sound, best score and experience points
-src/scenes/       one file per screen: title, games, credits, congrats, pairs, equals, map, sequence. levels.js is the screen shared by the games that are played theme after theme (pairs and equals)
+src/scenes/       one file per screen: title, games, credits, congrats, pairs, equals, languageMenu, languages, map, sequence. levels.js is the screen shared by the games that are played level after level (pairs, equals and languages)
 src/assets/       images/, sounds/, fonts/ (from the old game)
 ```
 
@@ -64,6 +66,7 @@ credits   title    title
 
 games -> sequence -> title   (the game ends with a banner: YOU WIN!, FAIL! or TIME IS UP)
 games -> equals -> map -> equals -> ... -> map -> congrats -> title   (same loop as pairs; "YOU LOST" also goes to the title)
+games -> languageMenu -> languages -> map -> languages -> ... -> map -> congrats -> title   (4 levels; the language is passed in params.extra)
 
 (The map shows after every completed level. It calls params.done() when the cat arrives
  or the player taps; pairs.js gives it the function that starts the next level.)
@@ -164,13 +167,17 @@ Each step is meant to be one work session. Order can change.
 **Step 3: game 4, Equals** (`C_NivelEquals`) (done)
 - [x] Rules in `src/equals.js`, drawing in `src/render-equals.js`, screen in `src/scenes/equals.js`. Settings: `EQ_*` in `config.js`. Uses `gato_equals.png` and `corazon.png`.
 - [x] The loop of levels (themes in random order, map, congratulations, experience) moved to `src/scenes/levels.js`, shared with *Make pairs*. A new game of this kind only needs `createGame` and `createRenderer`. The game object must have `score`, `result` (`"complete"` or something else when lost), `over`, `tap(p)` and `update(now)`; `lives` is carried between levels if it has it.
+- `createLevelsScene` also accepts `getLevels()` (the levels of a session, by default the 10 themes shuffled) and `map` (`{ image, positions }` of the map between levels). `params.extra` of a new session is kept for the whole session and given to `createGame` (the Languages game uses it for the language).
 - Small differences from the old game: a wrong card plays the `select` sound (the old game made no sound) and the red cross also shows on the card of the last mistake when the game is lost.
 
-**Step 4: game 3, Languages** (`C_NivelIdiomas`)
-- [ ] Language menu (`menuidiomas.jpg`, `mapa_idiomas.jpg`) and the game with the word cards (`cartaslang/`, `cartas_language*.png`, `gato_idioma.png`).
+**Step 4: game 3, Languages** (`C_NivelIdiomas`) (done)
+- [x] Language menu (`scenes/language-menu.js`, `menuidiomas.jpg`), rules in `src/languages.js`, drawing in `src/render-languages.js`, screen in `src/scenes/languages.js`, map `mapa_idiomas.jpg` (`MAP_LANG_POS`). Settings: `LANG_*` and `LANGUAGES` in `config.js`. To add a language: put its 4 word images in `src/assets/images` as `cartas_lang_<code>0.png` to `cartas_lang_<code>3.png` and add it to `LANGUAGES` (the menu image has 5 free slots that say "COMING SOON": its button areas can be added to the list).
+- [x] Small differences from the old game: tapping a picture that was already found does nothing (the old game took a life for it), and a wrong picture plays the `select` sound. The pictures are never turned face down in this game (as in the old one, where that code was commented out).
+- Known data problem of the old assets: in German (`cartas_lang_ge3.png`) the first word is "ROSA" and it should probably be "ROSE".
 
 **Step 5: quality**
-- [ ] Remove the "SOON" cover (now only Languages is covered) of the games menu when all the games exist.
+- [x] The "SOON" cover of the games menu was removed (all the games exist).
+- [ ] The games *Make pairs*, *Equals* and *Languages* repeat the same phases (dealing, observing, covering, playing...). A shared base for them would remove duplicated code.
 - [ ] Pause the game when the tab or the app is hidden.
 - [ ] Real app icon, and the old `cartel` and button art checked on small phones.
 - [ ] Basic tests for the rules (`pairs.js` is already pure logic and easy to test).

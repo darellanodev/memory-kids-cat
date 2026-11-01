@@ -1,8 +1,8 @@
 // Drawing pieces shared by the games. They only draw: they do not change any state.
 // `img(name)` returns a loaded image (see assets.js).
-import { BTN_PLAY_MENU, PARTICLE_SIZE } from "./config.js";
+import { BTN_PLAY_MENU, EQ_HEART, EQ_LIVES_TEXT, PARTICLE_SIZE } from "./config.js";
 import { ParticleSystem } from "./particles.js";
-import { drawText } from "./ui.js";
+import { drawText, formatScore } from "./ui.js";
 
 const BANNER_TEXT = { gray: 40, effect: "glow", align: "center", baseline: "alphabetic" };
 
@@ -26,6 +26,14 @@ export function drawTimeBar(ctx, img, width) {
   ctx.fillStyle = "#f00";
   ctx.fillRect(322, 29, width, 26);
   ctx.drawImage(img("time"), 320, 25, 157, 34);
+}
+
+// Score, lives (with the heart) and time bar of the games that have lives (g needs score, lives, timeLeft).
+export function drawLivesHud(ctx, img, g) {
+  drawTimeBar(ctx, img, g.timeLeft);
+  ctx.drawImage(img("corazon"), EQ_HEART.x, EQ_HEART.y, EQ_HEART.w, EQ_HEART.h);
+  drawText(ctx, String(Math.max(0, g.lives)), EQ_LIVES_TEXT.x, EQ_LIVES_TEXT.y, { size: 50, align: "right" });
+  drawText(ctx, formatScore(g.score), 20, 10, { size: 50 });
 }
 
 // Stars that shrink while they fly away. Their position is the top left corner (as in the old game).

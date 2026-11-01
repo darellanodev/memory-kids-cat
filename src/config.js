@@ -109,6 +109,35 @@ export const EQ_HEART = { x: 250, y: 25, w: 35, h: 33 }; // lives: the number is
 export const EQ_LIVES_TEXT = { x: 245, y: 10 };
 export const PARTICLES_EQUALS = 3; // stars when the player finds a card
 
+// --- Languages game ---
+// 4 levels (the first 4 themes). Every level has 6 pictures and, for every picture, its word in
+// each language: images cartas_language<n> (pictures) and cartas_lang_<code><n> (words, 460 x 113).
+export const LANG_LEVELS = 4;
+export const LANG_CARDS = 6;
+export const LANG_COLS = 3;
+export const LANG_BOARD = { x: 37, y: 250, stepX: 152, stepY: 178 }; // place of the first card and distances
+export const LANG_DEAL_TICKS = 7; // the old game waited one more step after the 6 cards
+export const LANG_COVER_WAIT = 350; // ms between "all cards covered" sound and the start (the cards stay face up here)
+export const LANG_WORD_SMALL = { dx: -35, dy: 110, w: 180, h: 44 }; // word under a card, from the card corner
+export const LANG_WORD_BIG = { x: 42, y: 103, w: 460, h: 113 }; // word to find
+export const LANG_CAT = { x: 27, y: 100, w: 80, h: 105 };
+// Languages of the menu. rect: button on menuidiomas.jpg. The other 5 slots say "COMING SOON" in the image.
+export const LANGUAGES = [
+  { code: "en", rect: { x: 27, y: 143, w: 133, h: 142 } },
+  { code: "es", rect: { x: 184, y: 143, w: 133, h: 142 } },
+  { code: "fr", rect: { x: 341, y: 143, w: 133, h: 142 } },
+  { code: "ge", rect: { x: 27, y: 311, w: 133, h: 142 } },
+];
+export const BTN_LANG_BACK = { x: 369, y: 690, w: 129, h: 107 };
+// Place of the cat on the map of this game (before each level, and after the last one).
+export const MAP_LANG_POS = [
+  { x: 121, y: 324 },
+  { x: 287, y: 303 },
+  { x: 375, y: 411 },
+  { x: 270, y: 530 },
+  { x: 225, y: 411 },
+];
+
 // --- Map between levels ---
 // Place of the cat on the map before each level (index 0) and after the last one (index 10).
 export const MAP_POS = [

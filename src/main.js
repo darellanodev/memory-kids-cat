@@ -4,6 +4,8 @@ import { createCreditsScene } from "./scenes/credits.js";
 import { createCongratsScene } from "./scenes/congrats.js";
 import { createEqualsScene } from "./scenes/equals.js";
 import { createGamesScene } from "./scenes/games.js";
+import { createLanguageMenuScene } from "./scenes/language-menu.js";
+import { createLanguagesScene } from "./scenes/languages.js";
 import { createMapScene } from "./scenes/map.js";
 import { createPairsScene } from "./scenes/pairs.js";
 import { createSequenceScene } from "./scenes/sequence.js";
@@ -69,6 +71,8 @@ async function start() {
     map: createMapScene({ ctx }),
     pairs: createPairsScene({ ctx, goTo }),
     equals: createEqualsScene({ ctx, goTo }),
+    languageMenu: createLanguageMenuScene({ ctx, goTo }),
+    languages: createLanguagesScene({ ctx, goTo }),
     sequence: createSequenceScene({ ctx, goTo }),
   });
 

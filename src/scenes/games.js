@@ -1,4 +1,4 @@
-// Menu to choose the game. "Make pairs", "Sequence" and "Equals" are ported so far: the others say "SOON".
+// Menu to choose the game.
 import { img } from "../assets.js";
 import { play } from "../audio.js";
 import {
@@ -9,9 +9,7 @@ import {
   GAME_SEQUENCE,
   W,
 } from "../config.js";
-import { drawText, inside } from "../ui.js";
-
-const SOON = [GAME_LANGUAGES];
+import { inside } from "../ui.js";
 
 export function createGamesScene({ ctx, goTo }) {
   return {
@@ -19,19 +17,6 @@ export function createGamesScene({ ctx, goTo }) {
     update() {},
     draw() {
       ctx.drawImage(img("menugames"), 0, 0, W, 800);
-      // Cover the games that are not ported yet.
-      for (const r of SOON) {
-        ctx.fillStyle = "rgba(230, 230, 230, 0.93)";
-        ctx.beginPath();
-        ctx.roundRect(r.x, r.y, r.w, r.h, 12);
-        ctx.fill();
-        drawText(ctx, "SOON", r.x + r.w / 2, r.y + r.h / 2 - 30, {
-          size: 44,
-          gray: 130,
-          effect: "none",
-          align: "center",
-        });
-      }
     },
     pointerDown(p) {
       if (inside(p, GAME_PAIRS)) {
@@ -43,6 +28,9 @@ export function createGamesScene({ ctx, goTo }) {
       } else if (inside(p, GAME_EQUALS)) {
         play("button");
         goTo("equals");
+      } else if (inside(p, GAME_LANGUAGES)) {
+        play("button");
+        goTo("languageMenu");
       } else if (inside(p, BTN_BACK)) {
         goTo("title");
       }
