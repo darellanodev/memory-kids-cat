@@ -41,7 +41,13 @@ To try the PWA on your computer, use `pnpm build` and then `pnpm preview` (the P
 
 After you publish a new version, the installed app updates itself the next time it is opened (you may need to open it twice).
 
-The icons are in `public/icons/`. They are a **placeholder** drawn for this first version: replace the 4 files (`icon-192.png`, `icon-512.png`, `icon-maskable-512.png` and `apple-touch-icon.png`) with the real icon of the game.
+The icons are in `public/icons/`, made from the 512 x 512 art of the game (`icon-512.png` is the art as it is):
+
+- `icon-512.png` and `icon-192.png`: the normal icon of the app.
+- `icon-maskable-512.png`: the same art, smaller (78 %) and with the gradient of the background extended. Android crops this icon with a shape (circle, rounded square...), so everything important must be inside the central circle of 80 % of its size.
+- `apple-touch-icon.png` (180 x 180, without transparency): the icon of iPhone and iPad. iOS makes the rounded corners.
+
+To change the icon, make these 4 files again from the new art (keep the names). The cat and the stars of the maskable one must stay inside the central circle. After installing a new version, the icon of an app that is already installed may not change until it is installed again.
 
 ## Project structure
 

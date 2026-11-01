@@ -116,7 +116,7 @@ The old source (`memorykidscat.pde`, about 2800 lines) is not part of this repos
 - Phones only allow sounds after a tap. `unlockAudio()` (in `audio.js`) is called in the first tap on the title screen. Do not play sounds before that and expect them to be heard.
 - The PWA is only active in the build. Test it with `pnpm build` and `pnpm preview`.
 - The status bar and the navigation bar of Android are black: `theme_color` and `background_color` in `vite.config.js`, `theme-color` in `index.html`, and the background of `html, body` in the standalone block of `styles.css`. Keep these four in sync. An already installed app may need to be uninstalled and installed again to show a new color.
-- Icons: `public/icons/`. They are placeholders. Keep the 4 files and their names, or change them in `vite.config.js` and `index.html`.
+- Icons: `public/icons/`, made from the real art of the game (512 x 512). Keep the 4 files and their names, or change them in `vite.config.js` and `index.html`. The maskable icon is the art at 78 % over the same gradient, so it stays inside the safe circle (80 % of the size) that Android can crop to; see `README.md`. To make new icons, start from `icon-512.png`.
 
 ## Pause
 
@@ -187,7 +187,8 @@ Each step is meant to be one work session. Order can change.
 - [x] The "SOON" cover of the games menu was removed (all the games exist).
 - [ ] The games *Make pairs*, *Equals* and *Languages* repeat the same phases (dealing, observing, covering, playing...). A shared base for them would remove duplicated code.
 - [x] Pause the game when the tab or the app is hidden (`src/pause.js`, see "Pause").
-- [ ] Real app icon, and the old `cartel` and button art checked on small phones.
+- [x] Real app icon (`public/icons/`).
+- [ ] The old `cartel` and button art checked on small phones.
 - [ ] Basic tests for the rules (`pairs.js` is already pure logic and easy to test).
 - [ ] Move to TypeScript if the project grows.
 
