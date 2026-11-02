@@ -20,7 +20,8 @@ The goal is to port the whole game step by step, one feature per session.
 - **Assets:** images and sounds in `src/assets/`. They are found with `import.meta.glob` in `src/assets.js` and loaded before the game starts.
 - **Tooling:** [Vite](https://vite.dev/) for the dev server and the production build. Package manager: **pnpm**.
 - **PWA:** [vite-plugin-pwa](https://vite-pwa-org.netlify.app/) makes the web manifest and the service worker in the build. The game can be installed and works offline.
-- **CI/CD:** GitHub Actions builds the project on every push to `main` and on pull requests. Pushes to `main` are also deployed to GitHub Pages (repository setting: Pages source = GitHub Actions).
+- **Tests:** [Vitest](https://vitest.dev/), in Node (no browser). See "Tests" below.
+- **CI/CD:** GitHub Actions runs the tests and builds the project on every push to `main` and on pull requests. Pushes to `main` are also deployed to GitHub Pages (repository setting: Pages source = GitHub Actions).
 
 ## Project structure
 
@@ -28,7 +29,10 @@ The goal is to port the whole game step by step, one feature per session.
 index.html        page and canvas
 styles.css        page styles and @font-face of the font "Helsinki"
 vite.config.js    Vite settings and PWA settings (manifest, offline files)
-public/icons/     app icons (placeholder, to be replaced)
+vitest.config.js  settings of the tests (without the PWA plugin)
+tests/            automated tests, one file per module or group (see "Tests")
+_design/          source art that is not part of the game (the SVG of the icon). It is outside public/, so it is not in the build
+public/icons/     app icons
 .github/workflows/build.yml   build, and deploy to GitHub Pages
 src/main.js       startup, scene switching, main loop, pointer and key events
 src/config.js     game settings, THEMES, and the button areas of the old images
@@ -90,9 +94,31 @@ pnpm install
 pnpm dev        # dev server
 pnpm build      # production build in dist/
 pnpm preview    # serve the production build
+pnpm test       # run all the tests once
+pnpm test:watch # run the tests again every time a file changes
 ```
 
-Run `pnpm build` before you finish a task. The CI runs the same command.
+Run `pnpm test` and `pnpm build` before you finish a task. The CI runs the same commands.
+
+## Tests
+
+About 200 tests run in 3 seconds with `pnpm test`. They use Node, not a browser, so they work in the CI too.
+
+| File | What it checks |
+|---|---|
+| `pairs.test.js`, `sequence.test.js`, `equals.test.js`, `languages.test.js` | The rules of each game: start, phases, points, lives, time, stages, win and lose. |
+| `scenes.test.js` | The screens and the flow: menus, a whole game of 10 (or 4) levels with the map between them, lives and score that go on, experience, the exit dialog. |
+| `main.test.js` | The real `main.js` with a fake browser: pause when the page is hidden, the tap that resumes, and the time of the game after the pause. |
+| `config-assets.test.js` | Settings and files agree: every image and sound exists, sprite sheets and full screen images have the right size, buttons are inside the screen. |
+| `progress.test.js`, `experience.test.js`, `particles.test.js`, `pause.test.js`, `banner.test.js`, `tween.test.js`, `random.test.js` | The small modules. |
+
+How they work:
+
+- `tests/helpers.js` has `seeded()` (random numbers that are always the same), `soundLog()`, `createRunner()` (moves the time of a game in steps of 16 ms) and `centerOf()`. A test never waits real time: `runner.until(condition)` moves the game time until something happens.
+- The games are tested through their public methods (`update`, `tap` and the getters), as the scene uses them. The scenes are tested with fake images and sounds (`vi.mock`), and a small `createApp()` that does what `main.js` does.
+- Tests compare with the values of `src/config.js` (for example `POINTS_MATCH`), so changing the balance of a game on purpose does not break them. They do break if the rule is wrong.
+- Every time the old game is ported, or a rule changes, the tests change in the same step: a new game needs its `<game>.test.js` and a "whole game" test in `scenes.test.js`; a new image or sound that the code needs, an entry in `config-assets.test.js`.
+- A bug that is found is fixed together with a test that fails without the fix.
 
 ## Working with the old game
 
@@ -146,6 +172,7 @@ All in `src/config.js`. Change them there before changing the logic:
 - Always use the logical space 500 × 800. Convert pointer coordinates with `toGame()` in `src/ui.js`.
 - Install libraries with pnpm and import them. Do not load libraries from a CDN.
 - **Version:** the `version` in `package.json` follows the number of the delivered zip: zip v7 is `0.7.0`, v8 will be `0.8.0`, and so on. Update it in every new version.
+- **Tests:** new rules and new games come with tests (see "Tests"). The tests are in English like the rest of the code, and their names say what the player or the game does (for example "a wrong card takes a life and points").
 - Use **pnpm** only. Do not use `npm` or `yarn`, and do not create `package-lock.json` or `yarn.lock`. Commit `pnpm-lock.yaml`, because the CI uses `--frozen-lockfile`.
 - Do not use `localStorage` without a `try/catch`.
 - To add an image or a sound, put the file in `src/assets/images` (png or jpg) or `src/assets/sounds` (mp3). The file name without the extension is its name in the code. Do not use plain paths like `"images/a.png"`, because they break in the build.
@@ -185,17 +212,17 @@ Each step is meant to be one work session. Order can change.
 
 **Step 5: quality**
 - [x] The "SOON" cover of the games menu was removed (all the games exist).
-- [ ] The games *Make pairs*, *Equals* and *Languages* repeat the same phases (dealing, observing, covering, playing...). A shared base for them would remove duplicated code.
+- [ ] The games *Make pairs*, *Equals* and *Languages* repeat the same phases (dealing, observing, covering, playing...). A shared base for them would remove duplicated code. Do it with the tests of the three games as safety.
 - [x] Pause the game when the tab or the app is hidden (`src/pause.js`, see "Pause").
 - [x] Real app icon (`public/icons/`).
 - [ ] The old `cartel` and button art checked on small phones.
-- [ ] Basic tests for the rules (`pairs.js` is already pure logic and easy to test).
+- [x] Tests (Vitest, see "Tests"). They also make the next refactor safe.
 - [ ] Move to TypeScript if the project grows.
 
 ## Instructions for agents
 
 - Respect the split between rules (`pairs.js`...), drawing (`render.js`...) and scenes.
 - Always test with mouse and touch (the events are `pointer*`).
-- Do not break the CI: `pnpm install --frozen-lockfile` and `pnpm build` must pass.
+- Do not break the CI: `pnpm install --frozen-lockfile`, `pnpm test` and `pnpm build` must pass.
 - Do not add new dependencies without a good reason. Add them with `pnpm add` (or `pnpm add -D` for dev tools).
 - When a roadmap item is finished, mark it here and update `README.md` if it changes what the game has.

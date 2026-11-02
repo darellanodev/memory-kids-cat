@@ -19,12 +19,14 @@ Then open the address shown in the terminal.
 
 Other commands:
 
+- `pnpm test`: run the automated tests (about 200, in 3 seconds).
+- `pnpm test:watch`: run the tests again every time you save a file.
 - `pnpm build`: create the production build in `dist/`.
 - `pnpm preview`: serve the production build locally.
 
 ## Build and deploy on GitHub
 
-The workflow `.github/workflows/build.yml` runs on every push to `main` and on every pull request. It installs the dependencies and runs `pnpm build`.
+The workflow `.github/workflows/build.yml` runs on every push to `main` and on every pull request. It installs the dependencies, runs the tests (`pnpm test`) and then the build (`pnpm build`). If a test fails, nothing is published.
 
 On pushes to `main` it also publishes the game to GitHub Pages: `https://<your-user>.github.io/memorykidscat/`.
 
@@ -55,6 +57,9 @@ To change the icon, make these 4 files again from the new art (keep the names). 
 index.html        page and canvas
 styles.css        page styles and the font of the game
 vite.config.js    Vite settings and PWA settings
+vitest.config.js  settings of the tests
+tests/            automated tests
+_design/          source art that is not part of the game (not in the build)
 public/icons/     app icons
 .github/workflows/build.yml   automatic build on push
 src/main.js       startup, screens and main loop
